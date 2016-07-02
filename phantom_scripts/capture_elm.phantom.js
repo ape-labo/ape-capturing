@@ -7,6 +7,9 @@ var selector = system.args[ 3 ]
 var sizes = system.args[ 4 ].split('x')
 
 function indexedFilename (filename, i) {
+  if (i === 0) {
+    return filename
+  }
   var components = filename.split(/\./g)
   var extname = components.pop()
   return components.concat(i).concat(extname).join('.')
@@ -26,6 +29,7 @@ page.open(url, function () {
     }
     return rects
   }, selector)
+
   for (var i = 0; i < rects.length; i++) {
     page.clipRect = rects[ i ]
     var rendering = indexedFilename(filename, i)
