@@ -19,25 +19,34 @@ page.viewportSize = {
   width: sizes[ 0 ],
   height: sizes[ 1 ]
 }
+
 page.open(url, function () {
-  var rects = page.evaluate(function (selector) {
-    var rects = []
-    var elements = document.querySelectorAll(selector)
-    for (var i = 0; i < elements.length; i++) {
-      var rect = elements[ i ].getBoundingClientRect()
-      rects.push(rect)
+  setTimeout(function () {
+    var rects = page.evaluate(function (selector, width, height) {
+      var rects = []
+      var elements = document.querySelectorAll(selector)
+      for (var i = 0; i < elements.length; i++) {
+        var rect = elements[ i ].getBoundingClientRect()
+        rects.push({
+          left: rect.left,
+          top: rect.top,
+          width: width,
+          height: height
+        })
+      }
+      return rects
+    }, selector, sizes[ 0 ], sizes[ 1 ])
+
+    for (var i = 0; i < rects.length; i++) {
+      page.clipRect = rects[ i ]
+      console.log(rects[ i ].height)
+      var rendering = indexedFilename(filename, i)
+      console.log('Render file:', rendering)
+      page.render(rendering)
     }
-    return rects
-  }, selector)
 
-  for (var i = 0; i < rects.length; i++) {
-    page.clipRect = rects[ i ]
-    var rendering = indexedFilename(filename, i)
-    console.log('Render file:', rendering)
-    page.render(rendering)
-  }
-
-  phantom.exit()
+    phantom.exit()
+  }, 100)
 })
 
 /* global document, phantom */
