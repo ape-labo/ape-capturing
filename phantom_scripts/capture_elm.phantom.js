@@ -22,20 +22,15 @@ page.viewportSize = {
 
 page.open(url, function () {
   setTimeout(function () {
-    var rects = page.evaluate(function (selector, width, height) {
+    var rects = page.evaluate(function (selector) {
       var rects = []
       var elements = document.querySelectorAll(selector)
       for (var i = 0; i < elements.length; i++) {
         var rect = elements[ i ].getBoundingClientRect()
-        rects.push({
-          left: rect.left,
-          top: rect.top,
-          width: width,
-          height: height
-        })
+        rects.push(rect)
       }
       return rects
-    }, selector, sizes[ 0 ], sizes[ 1 ])
+    }, selector)
 
     for (var i = 0; i < rects.length; i++) {
       page.clipRect = rects[ i ]
